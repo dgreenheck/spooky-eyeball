@@ -137,3 +137,21 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Audio and texture files (user should add their own)
+public/sounds/*.mp3
+public/sounds/*.wav
+public/sounds/*.ogg
+public/textures/*.hdr
+public/textures/*.exr
+
+# Keep README files
+!public/sounds/README.md
+!public/textures/README.md
+
+# Editor directories
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.local
