@@ -7,13 +7,16 @@ export class SoundManager {
 
     async init() {
         try {
+            // Use BASE_URL to handle both local and production environments
+            const baseUrl = import.meta.env.BASE_URL;
+
             // Load ambient sound
-            this.ambientSound = new Audio('/sounds/ambient.mp3');
+            this.ambientSound = new Audio(`${baseUrl}sounds/ambient.mp3`);
             this.ambientSound.loop = true;
             this.ambientSound.volume = 0.3;
 
             // Load squish sound
-            this.squishSound = new Audio('/sounds/squish.mp3');
+            this.squishSound = new Audio(`${baseUrl}sounds/squish.mp3`);
             this.squishSound.volume = 0.5;
 
             this.initialized = true;

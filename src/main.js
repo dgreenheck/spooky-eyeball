@@ -88,7 +88,9 @@ class SpookyEyeballApp {
     const loader = new THREE.TextureLoader();
 
     try {
-      const texture = await loader.loadAsync('/textures/environment.jpg');
+      // Use BASE_URL to handle both local and production environments
+      const baseUrl = import.meta.env.BASE_URL;
+      const texture = await loader.loadAsync(`${baseUrl}textures/environment.jpg`);
       texture.mapping = THREE.EquirectangularReflectionMapping;
       texture.colorSpace = THREE.SRGBColorSpace;
 
