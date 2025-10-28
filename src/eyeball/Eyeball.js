@@ -28,35 +28,35 @@ export class Eyeball {
 
       // Vein parameters
       veinColor: { r: 255, g: 0, b: 0 },
-      veinIntensity: 0.25,
-      veinBumpStrength: 0.25,
+      veinIntensity: 0.75,
+      veinBumpStrength: 0.1,
 
       // Layer 1
       veinFrequency: 2,
       veinOctaves: 5,
-      veinLacunarity: 2.0,
-      veinGain: 0.5,
-      veinThreshold: 0.04,
-      veinThickness: 0.048,
+      veinLacunarity: 1.7,
+      veinGain: 0.55,
+      veinThreshold: 0.052,
+      veinThickness: 0.1,
 
       // Layer 2
-      veinFrequency2: 7.0,
-      veinOctaves2: 3,
+      veinFrequency2: 6.0,
+      veinOctaves2: 4,
       veinLacunarity2: 2.1,
-      veinGain2: 0.35,
-      veinThreshold2: 0.055,
+      veinGain2: 0.5,
+      veinThreshold2: 0.04,
       veinThickness2: 0.1,
 
       // Fresnel redness
-      depthFade: 0.25,
-      rednessIntensity: 1.8,
+      depthFade: 0.92,
+      rednessIntensity: 5,
       rednessPower: 1,
-      rednessNoiseOctaves: 3,
-      rednessNoiseThreshold: 0.13,
+      rednessNoiseOctaves: 5,
+      rednessNoiseThreshold: 0.18,
       rednessNoiseMagnitude: 0.05,
 
       // Lighting
-      fresnelPower: 1.2,
+      fresnelPower: 1.4,
       envMapIntensity: 2,
       envMapBlur: 6
     };
