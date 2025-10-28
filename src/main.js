@@ -32,7 +32,7 @@ class SpookyEyeballApp {
       0.1,
       1000
     );
-    this.camera.position.set(0, 0, 3);
+    this.camera.position.set(0, 0, 2.5);
     this.camera.lookAt(0, 0, 0);
 
     // Setup renderer
@@ -131,6 +131,12 @@ class SpookyEyeballApp {
     requestAnimationFrame(() => this.animate());
 
     const deltaTime = this.clock.getDelta();
+    const elapsedTime = this.clock.getElapsedTime();
+
+    // Update eyeball animation (pulsing veins)
+    if (this.eyeball) {
+      this.eyeball.update(elapsedTime);
+    }
 
     // Update mouse tracking
     if (this.mouseTracker) {

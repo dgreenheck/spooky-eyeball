@@ -39,10 +39,16 @@ export class TweakpaneControls {
       this.eyeball.updateParam('uIrisSize', ev.value);
     });
 
-    irisFolder.addBinding(this.eyeball.params, 'irisColor', {
-      label: 'Color'
+    irisFolder.addBinding(this.eyeball.params, 'irisInnerColor', {
+      label: 'Inner Color'
     }).on('change', (ev) => {
-      this.eyeball.updateColor('uIrisColor', ev.value);
+      this.eyeball.updateColor('uIrisInnerColor', ev.value);
+    });
+
+    irisFolder.addBinding(this.eyeball.params, 'irisOuterColor', {
+      label: 'Outer Color'
+    }).on('change', (ev) => {
+      this.eyeball.updateColor('uIrisOuterColor', ev.value);
     });
 
     // Limbus band sub-folder (transition ring between iris and sclera)

@@ -9,7 +9,8 @@ export class Eyeball {
       pupilSize: 0.15,
       pupilColor: { r: 0, g: 0, b: 0 },
       irisSize: 0.37,
-      irisColor: { r: 255, g: 115, b: 0 },
+      irisInnerColor: { r: 255, g: 115, b: 0 },
+      irisOuterColor: { r: 136, g: 47, b: 3 },
       irisFeather: 0.0, // Small value for blending, limbus band handles visual transition
       scleraColor: { r: 255, g: 248, b: 240 },
 
@@ -28,7 +29,7 @@ export class Eyeball {
 
       // Vein parameters
       veinColor: { r: 255, g: 0, b: 0 },
-      veinIntensity: 0.75,
+      veinIntensity: 0.7,
       veinBumpStrength: 0.1,
 
       // Layer 1
@@ -70,7 +71,8 @@ export class Eyeball {
       fragmentShader,
       uniforms: {
         uPupilColor: { value: new THREE.Color(this.params.pupilColor.r / 255, this.params.pupilColor.g / 255, this.params.pupilColor.b / 255) },
-        uIrisColor: { value: new THREE.Color(this.params.irisColor.r / 255, this.params.irisColor.g / 255, this.params.irisColor.b / 255) },
+        uIrisInnerColor: { value: new THREE.Color(this.params.irisInnerColor.r / 255, this.params.irisInnerColor.g / 255, this.params.irisInnerColor.b / 255) },
+        uIrisOuterColor: { value: new THREE.Color(this.params.irisOuterColor.r / 255, this.params.irisOuterColor.g / 255, this.params.irisOuterColor.b / 255) },
         uScleraColor: { value: new THREE.Color(this.params.scleraColor.r / 255, this.params.scleraColor.g / 255, this.params.scleraColor.b / 255) },
         uPupilSize: { value: this.params.pupilSize },
         uIrisSize: { value: this.params.irisSize },
@@ -119,7 +121,9 @@ export class Eyeball {
 
         uEnvMap: { value: envMap },
         uEnvMapIntensity: { value: this.params.envMapIntensity },
-        uEnvMapBlur: { value: this.params.envMapBlur }
+        uEnvMapBlur: { value: this.params.envMapBlur },
+
+        uTime: { value: 0 }
       }
     });
 
@@ -152,5 +156,9 @@ export class Eyeball {
 
   getMesh() {
     return this.mesh;
+  }
+
+  update(time) {
+    this.material.uniforms.uTime.value = time;
   }
 }

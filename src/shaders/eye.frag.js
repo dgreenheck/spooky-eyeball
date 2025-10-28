@@ -4,7 +4,8 @@ export const fragmentShader = `
 ${noiseGLSL}
 
 uniform vec3 uPupilColor;
-uniform vec3 uIrisColor;
+uniform vec3 uIrisInnerColor;
+uniform vec3 uIrisOuterColor;
 uniform vec3 uScleraColor;
 uniform float uPupilSize;
 uniform float uIrisSize;
@@ -66,6 +67,8 @@ uniform samplerCube uEnvMap;
 uniform float uEnvMapIntensity;
 uniform float uEnvMapBlur;
 
+uniform float uTime;
+
 varying vec3 vNormal;
 varying vec3 vPosition;
 varying vec2 vUv;
@@ -101,12 +104,33 @@ void main() {
         // Iris with noise pattern and limbus transition
         float irisBlend = smoothstep(uPupilSize, uPupilSize + 0.05, distanceFromCenter);
 
-        // Base iris pattern with noise
-        vec3 irisPattern = uIrisColor * (0.7 + 0.3 * irisNoise);
+        // Calculate radial gradient for inner/outer color mix
+        float radialGradient = smoothstep(uPupilSize, uIrisSize, distanceFromCenter);
+
+        // Create angular noise that varies with theta
+        // Use multiple frequencies to create an uneven, organic transition
+        float angleNoise = fbm(
+            vec2(angle * 3.0, distanceFromCenter * 10.0),
+            5,
+            2.0,
+            1.0,
+            2.0,
+            0.5
+        );
+
+        // Modulate the radial gradient with angular noise
+        float colorMix = radialGradient + angleNoise * 0.3;
+        colorMix = clamp(colorMix, 0.0, 1.0);
+
+        // Blend between inner and outer iris colors
+        vec3 irisBaseColor = mix(uIrisInnerColor, uIrisOuterColor, colorMix);
+
+        // Apply texture noise for detail
+        vec3 irisPattern = irisBaseColor * (0.7 + 0.3 * irisNoise);
 
         // Add radial darkening towards edge
-        float radialGradient = smoothstep(uIrisSize, uPupilSize, distanceFromCenter);
-        irisPattern *= 0.5 + 0.5 * radialGradient;
+        float darkeningGradient = smoothstep(uIrisSize, uPupilSize, distanceFromCenter);
+        irisPattern *= 0.5 + 0.5 * darkeningGradient;
 
         // Calculate limbus transition at iris edge
         // Limbus starts at inner edge and extends outward by limbusThickness
@@ -142,6 +166,11 @@ void main() {
         float depthFactor = (1.0 - normalizedPos.z) * 0.5 + 0.5; // Normalized to 0-1
         depthFactor = mix(1.0, depthFactor, uDepthFade);
 
+        // Create pulsing effect for vein thresholds
+        float pulse = sin(uTime * 4.0) * 0.005; // Subtle pulse, ±0.005
+        float veinThresholdPulsed = uVeinThreshold + pulse;
+        float veinThreshold2Pulsed = uVeinThreshold2 + pulse;
+
         // First layer of veins
         float veinNoise1 = fbm3D(
             vPosition,
@@ -151,7 +180,7 @@ void main() {
             uVeinLacunarity,
             uVeinGain
         );
-        veinNoise1 = smoothstep(uVeinThreshold, uVeinThreshold - uVeinThickness, abs(veinNoise1));
+        veinNoise1 = smoothstep(veinThresholdPulsed, veinThresholdPulsed - uVeinThickness, abs(veinNoise1));
 
         // Second layer of veins with separate noise parameters
         float veinNoise2 = fbm3D(
@@ -162,7 +191,7 @@ void main() {
             uVeinLacunarity2,
             uVeinGain2
         );
-        veinNoise2 = smoothstep(uVeinThreshold2, uVeinThreshold2 - uVeinThickness2, abs(veinNoise2));
+        veinNoise2 = smoothstep(veinThreshold2Pulsed, veinThreshold2Pulsed - uVeinThickness2, abs(veinNoise2));
 
         // Take absolute value and threshold to create vein lines
         float veins = veinNoise1 + veinNoise2;
@@ -210,6 +239,11 @@ void main() {
 
     // Calculate bump effect from both veins and redness
     if (uVeinBumpStrength > 0.0) {
+        // Create pulsing effect for bump mapping (same as vein rendering)
+        float pulse = sin(uTime * 2.0) * 0.005;
+        float veinThresholdPulsed = uVeinThreshold + pulse;
+        float veinThreshold2Pulsed = uVeinThreshold2 + pulse;
+
         // Sample vein noise at current position for both layers
         // Apply the same processing as the vein rendering to match pattern
         float veinBump1 = fbm3D(
@@ -220,7 +254,7 @@ void main() {
             uVeinLacunarity,
             uVeinGain
         );
-        veinBump1 = smoothstep(uVeinThreshold, uVeinThreshold - uVeinThickness, abs(veinBump1));
+        veinBump1 = smoothstep(veinThresholdPulsed, veinThresholdPulsed - uVeinThickness, abs(veinBump1));
 
         float veinBump2 = fbm3D(
             vPosition,
@@ -230,7 +264,7 @@ void main() {
             uVeinLacunarity2,
             uVeinGain2
         );
-        veinBump2 = smoothstep(uVeinThreshold2, uVeinThreshold2 - uVeinThickness2, abs(veinBump2));
+        veinBump2 = smoothstep(veinThreshold2Pulsed, veinThreshold2Pulsed - uVeinThickness2, abs(veinBump2));
 
         // Combine vein and redness noise for bump mapping
         float combinedBump = veinBump1 + veinBump2 + rednessNoise;
