@@ -23,10 +23,9 @@ export class MouseTracker {
     this.smoothness = 0.1;
 
     // Pupil size parameters
-    this.basePupilSize = 0.12;
-    this.maxPupilScale = 1.5; // 25% increase
-    this.currentPupilSize = this.basePupilSize;
-    this.targetPupilSize = this.basePupilSize;
+    this.maxPupilScale = 1.5; // 50% increase when mouse is at center
+    this.currentPupilSize = this.eyeball.params.pupilSize;
+    this.targetPupilSize = this.eyeball.params.pupilSize;
 
     // Eye direction tracking
     this.eyeDirection = new THREE.Vector3(0, 0, 1);
@@ -57,9 +56,10 @@ export class MouseTracker {
 
       // Calculate pupil size: larger when close (distance = 0), normal when far (distance = 1)
       // Use inverse relationship: (1 - distance)
+      // Use the base pupil size from eyeball params so control panel changes are respected
       const proximityFactor = 1 - normalizedDistance;
       const scaleMultiplier = 1 + (this.maxPupilScale - 1) * proximityFactor;
-      this.targetPupilSize = this.basePupilSize * scaleMultiplier;
+      this.targetPupilSize = this.eyeball.params.pupilSize * scaleMultiplier;
     });
   }
 
